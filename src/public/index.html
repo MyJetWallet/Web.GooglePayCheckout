@@ -32,7 +32,7 @@ const baseRequest = {
  * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#CardParameters|CardParameters}
  * @todo confirm card networks supported by your site and gateway
  */
-const allowedCardNetworks = ["AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA"];
+const allowedCardNetworks = ["MASTERCARD", "VISA"];
 
 /**
  * Card authentication methods supported by your site and your gateway
@@ -41,8 +41,7 @@ const allowedCardNetworks = ["AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD",
  * @todo confirm your processor supports Android device tokens for your
  * supported card networks
  */
-/*const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];*/
-const allowedCardAuthMethods = ["PAN_ONLY"];
+const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
 const gatewayMerchantId = "googletest"
 const YOUR_MERCHANT_ACCOUNT_NAME = "Test";
 /**
@@ -132,7 +131,7 @@ function getGooglePaymentDataRequest() {
     // @todo a merchant ID is available for a production environment after approval by Google
     // See {@link https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist|Integration checklist}
     // merchantId: '01234567890123456789',
-    merchantName: 'Simple earn application'};
+    merchantName: 'Test'};
   paymentDataRequest.callbackIntents =  ["PAYMENT_AUTHORIZATION"];
   return paymentDataRequest;
 }
@@ -200,7 +199,8 @@ function getGoogleTransactionInfo() {
     currencyCode: 'USD',
     totalPriceStatus: 'FINAL',
     // set to cart total
-    totalPrice: '1.00'
+    totalPrice: '1.00',
+    totalPriceLabel: "Total"
   };
 }
 
@@ -213,8 +213,11 @@ function prefetchGooglePaymentData() {
   const paymentDataRequest = getGooglePaymentDataRequest();
   // transactionInfo must be set but does not affect cache
   paymentDataRequest.transactionInfo = {
-    totalPriceStatus: 'NOT_CURRENTLY_KNOWN',
-    currencyCode: 'USD'
+    totalPriceStatus: 'FINAL',
+    currencyCode: 'USD',
+    countryCode: 'US',
+    totalPrice: '1.00',
+    totalPriceLabel: "Total"
   };
   const paymentsClient = getGooglePaymentsClient();
   paymentsClient.prefetchPaymentData(paymentDataRequest);
@@ -277,8 +280,8 @@ function processPayment(paymentData) {
       let paymentToken = paymentData.paymentMethodData.tokenizationData.token;
       resolve({});
       console.log(paymentToken);
-      const result = document.getElementById('result')
-      result.innerHTML = paymentToken
+      //const result = document.getElementById('result');
+      //result.innerHTML = paymentToken;
     }, 500);
   }, 500);
 }
